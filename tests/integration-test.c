@@ -47,6 +47,28 @@ void testRSA(uint64_t p, uint64_t q, char x) {
   assert(1 == modInverseResEAndD);
 }
 
+void testSignature(uint64_t p, uint64_t q, char message) {
+  uint64_t n = p * q;
+  uint64_t phiResult = phi(p, q);
+
+  struct Key public;
+  struct Key private;
+
+  keyGeneration(&phiResult, &private, &public);
+  
+  uint64_t messageValue = (uint64_t)message;
+  uint64_t signature = signMessage(messageValue, &private, n);
+  int isValid = verifySignature(messageValue, signature, &public, n);
+
+  printf("\n%sSignature test with p: %lu, q: %lu is valid.%s\n", GREEN, p, q, RESET);
+  printf("• message: '%c' (value: %" PRIu64 ")\n"
+    "• signature: %" PRIu64 "\n"
+    "• verification result: %s\n",
+    message, messageValue, signature, isValid ? "VALID" : "INVALID");
+    
+  assert(isValid == 1);
+}
+
 void integrationTests() {
   printf("\nRunning tests...\n");
   testRSA(26497, 78577, 'U');
@@ -61,4 +83,16 @@ void integrationTests() {
   testRSA(3, 11, '\0'); /*the binary value of the plaintext x must be less
           than n so use null character which has 0 binary representation in
           ASCII table for small p and q (p*q = n)*/
+
+  printf("\nRunning signature validation tests...\n");
+  testSignature(26497, 78577, 'U');
+  testSignature(45433, 92377, 'K');
+  testSignature(159979, 28051, 'R');
+  testSignature(100129, 25033, 'A');
+  testSignature(16871, 56519, 'I');
+  testSignature(69031, 6359, 'N');
+  testSignature(14771, 113083, 'E');
+  
+  printf("\nTesting signature with small numbers\n");
+  testSignature(3, 11, '\0');
 }

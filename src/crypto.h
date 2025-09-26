@@ -14,3 +14,9 @@ void encryptTxt(char* initialFileName, char* encryptedFileName,
 //* Decrypt ciphertext from *.txt to different file
 void decryptTxt(char* encryptedFileName, char* decryptedFileName,
   struct Key* private, uint64_t n);
+
+//* Create digital signature for a message using private key
+uint64_t signMessage(uint64_t message, struct Key* private, uint64_t n);
+
+//* Verify digital signature using public key
+int verifySignature(uint64_t message, uint64_t signature, struct Key* public, uint64_t n);

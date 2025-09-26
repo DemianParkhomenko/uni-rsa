@@ -12,9 +12,9 @@ uint64_t exponentAndMod(uint64_t num, uint64_t exponent, char binExponent[64],
   binExpNumberOfBits--; //* /0/0 second bit from left
 
   while (binExpNumberOfBits > 0) {
-    res = (res * res) % mod;
+    res = ((__int128)res * res) % mod;
     if ('1' == binExponent[--binExpNumberOfBits]) {
-      res = (res * num) % mod;
+      res = ((__int128)res * num) % mod;
     };
   }
   return res;
@@ -60,4 +60,15 @@ void decryptTxt(char* encryptedFileName, char* decryptedFileName,
   }
   fclose(encryptedFile);
   fclose(decryptedFile);
+}
+
+uint64_t signMessage(uint64_t message, struct Key* private, uint64_t n) {
+  return exponentAndMod(message, private->key, private->binKey,
+    private->binKeyNumberOfBits, n);
+}
+
+int verifySignature(uint64_t message, uint64_t signature, struct Key* public, uint64_t n) {
+  uint64_t recoveredMessage = exponentAndMod(signature, public->key, public->binKey,
+    public->binKeyNumberOfBits, n);
+  return (recoveredMessage == message) ? 1 : 0;
 }

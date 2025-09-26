@@ -42,5 +42,16 @@ int main() {
 
   encryptTxt(INITIAL_FILE_PATH, ENCRYPTED_FILE_PATH, &public, n);
   decryptTxt(ENCRYPTED_FILE_PATH, DECRYPTED_FILE_PATH, &private, n);
+  
+  printf("\nDemonstrating signature validation:\n");
+  char testMessage = 'R'; 
+  uint64_t messageValue = (uint64_t)testMessage;
+  uint64_t signature = signMessage(messageValue, &private, n);
+  int isValid = verifySignature(messageValue, signature, &public, n);
+  
+  printf("• Message: '%c' (value: %" PRIu64 ")\n", testMessage, messageValue);
+  printf("• Digital signature: %" PRIu64 "\n", signature);
+  printf("• Signature verification: %s\n", isValid ? "VALID" : "INVALID");
+  
   return 0;
 }
